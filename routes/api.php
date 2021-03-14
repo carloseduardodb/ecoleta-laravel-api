@@ -25,3 +25,5 @@ Route::get('/items', [ItemController::class, 'index']);
 Route::post('/points', [PointController::class, 'store']);
 
 Route::get('/points', [PointController::class, 'index']);
+
+Route::get('/point/{point}', [PointController::class, 'show']);

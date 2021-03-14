@@ -15,4 +15,9 @@ class Point extends Model
     protected $fillable = [
         'image_path', 'name', 'whatsapp', 'email', 'latitude', 'longitude', 'city', 'uf', 'items'
     ];
+
+    public function items()
+    {
+        return $this->belongsToMany(Item::class, 'point_items');
+    }
 }

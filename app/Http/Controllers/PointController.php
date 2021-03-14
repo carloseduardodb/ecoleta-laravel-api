@@ -19,9 +19,9 @@ class PointController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            'data' => Point::all()
-        ]);
+        $points = Point::all();
+
+        return $points;
     }
 
     /**
@@ -38,7 +38,7 @@ class PointController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return Point|\Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -89,12 +89,16 @@ class PointController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Point $point
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Point $point)
     {
-        //
+        return response()->json(
+            [
+                'point' => $point,
+                'items' => $point->items,
+            ], 200
+        );
     }
 
     /**

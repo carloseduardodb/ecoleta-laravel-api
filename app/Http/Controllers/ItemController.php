@@ -20,7 +20,7 @@ class ItemController extends Controller
             return [
                 'id' => $item->id,
                 'title' => $item->title,
-                'image_path' => 'http://127.0.0.1:8000/storage/uploads/'.$item->image_path
+                'image_path' => 'http://10.0.0.100:8000/storage/uploads/'.$item->image_path
             ];
         });
 
