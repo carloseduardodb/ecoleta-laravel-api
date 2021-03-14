@@ -8,6 +8,8 @@ use App\Models\Point;
 use App\Models\PointItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class PointController extends Controller
@@ -38,12 +40,12 @@ class PointController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return Point|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Support\MessageBag
      */
     public function store(Request $request)
     {
         //*Cors e transaction, e as relações*/
-        Validator::make($request->all(), [
+        $validate = Validator::make($request->all(), [
             'name' => 'required',
             'whatsapp' => 'required',
             'email' => 'required',
@@ -52,10 +54,15 @@ class PointController extends Controller
             'uf' => 'required',
             'image_path' => 'required',
             'items' => 'required'
-        ])->validated();
+        ]);
+
+        if ($validate->fails()) {
+            return $validate->messages();
+        }
 
         $point = new Point();
-        $point->image_path = $request->image_path;
+        $point->image_path =
+            str_replace('public', 'storage', $request->image_path->store('public/uploads'));
         $point->name = $request->name;
         $point->whatsapp = $request->whatsapp;
         $point->email = $request->email;
@@ -64,7 +71,9 @@ class PointController extends Controller
         $point->city = $request->city;
         $point->uf = $request->uf;
         $point->save();
-        $items = collect($request->items);
+
+        $hydrated_items = explode(', ', $request->items);
+        $items = collect($hydrated_items);
 
         $point_items = $items->map(function($item) use ($point){
             return [
@@ -93,14 +102,11 @@ class PointController extends Controller
      */
     public function show(Point $point)
     {
-        /*
-        **  sem isso daqui o relacionamento não é retornado via json, não faço a minima
-        **  ideia do porque kkkk e se colocar ele lá em baixo o relacionamento sai duas vezes
-        */
-        $point->items;
+        $point->image_path = URL::to('/').'/'.$point->image_path;
         return response()->json(
             [
-                'point' => $point
+                'point' => $point,
+                'items' => $point->items
             ], 200
         );
     }
