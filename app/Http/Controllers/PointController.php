@@ -93,10 +93,14 @@ class PointController extends Controller
      */
     public function show(Point $point)
     {
+        /*
+        **  sem isso daqui o relacionamento não é retornado via json, não faço a minima
+        **  ideia do porque kkkk e se colocar ele lá em baixo o relacionamento sai duas vezes
+        */
+        $point->items;
         return response()->json(
             [
-                'point' => $point,
-                'items' => $point->items,
+                'point' => $point
             ], 200
         );
     }
